@@ -61,6 +61,8 @@ export LANG=en_US.UTF-8
 export LIBRARY_PATH=/app/.heroku/vendor/lib
 export LD_LIBRARY_PATH=/app/.heroku/vendor/lib
 
+rm -rfv /app/.heroku/node
+
 # Switch to the repo's context.
 cd $BUILD_DIR
 
@@ -99,17 +101,6 @@ set -e
 mkdir -p $(dirname $PROFILE_PATH)
 
 set +e
-PYTHON_VERSION=$(cat runtime.txt)
-
-# Install Python.
-if [ -f .heroku/python-version ]; then
-  if [ ! $(cat .heroku/python-version) = $PYTHON_VERSION ]; then
-    puts-step "Found $(cat .heroku/python-version), removing."
-    rm -fr .heroku/python
-  else
-    SKIP_INSTALL=1
-  fi
-fi
 
 set -e
 hash -r
