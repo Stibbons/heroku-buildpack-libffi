@@ -111,42 +111,6 @@ if [ -f .heroku/python-version ]; then
   fi
 fi
 
-
-if [ ! "$SKIP_INSTALL" ]; then
-  puts-step "Preparing Python runtime ($PYTHON_VERSION)"
-  curl http://envy-versions.s3.amazonaws.com/$PYTHON_VERSION.tar.bz2 -s | tar jx &> /dev/null
-  if [[ $? != 0 ]] ; then
-    puts-warn "Requested runtime ($PYTHON_VERSION) was not found."
-    puts-warn "Aborting.  More info: https://devcenter.heroku.com/articles/python-support"
-    exit 1
-  fi
-  mv python .heroku/python
-
-  # Record for future reference.
-  echo $PYTHON_VERSION > .heroku/python-version
-  FRESH_PYTHON=true
-
-  hash -r
-else
-  puts-step "Using Python runtime ($PYTHON_VERSION)"
-fi
-
-# If Pip isn't up to date:
-if [ "$FRESH_PYTHON" ] || [[ ! $(pip --version) == *$PIP_VERSION* ]]; then
-  WORKING_DIR=$(pwd)
-
-  # Prepare it for the real world
-  puts-step "Installing Distribute ($DISTRIBUTE_VERSION)"
-  cd $ROOT_DIR/vendor/distribute-$DISTRIBUTE_VERSION/
-  python setup.py install &> /dev/null
-  cd $WORKING_DIR
-
-  puts-step "Installing Pip ($PIP_VERSION)"
-  cd $ROOT_DIR/vendor/pip-$PIP_VERSION/
-  python setup.py install &> /dev/null
-  cd $WORKING_DIR
-fi
-
 set -e
 hash -r
 
